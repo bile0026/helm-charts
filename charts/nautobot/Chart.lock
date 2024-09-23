@@ -17,5 +17,20 @@ dependencies:
 - name: common
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 2.23.0
-digest: sha256:832104a045d59a0652042ff20e752a253feed32e2d9e78034568363c47187f27
-generated: "2024-09-20T09:55:20.803459957+03:00"
+- name: prometheus
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 1.3.22
+- name: grafana-mimir
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 1.2.17
+- name: grafana-tempo
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 3.7.10
+- name: grafana-loki
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 4.6.16
+- name: opentelemetry-collector
+  repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+  version: 0.106.1
+digest: sha256:7ecbd5865261a0db3337b56e149d1126b7527e4305522d3095fc7ccbd1f54a49
+generated: "2024-09-23T12:31:11.331385-05:00"
