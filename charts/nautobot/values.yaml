@@ -1314,7 +1314,7 @@ grafana-loki:
 
 
 # Open Telemetry Connector
-opentelemetry-collector:
+open-telemetry:
   image:
     repository: "otel/opentelemetry-collector-k8s"
   namespaceOverride: nautobot
