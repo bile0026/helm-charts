@@ -1279,7 +1279,7 @@ tempo:
         send_exemplars: true
 
 # Loki
-grafana-loki:
+loki:
   namespaceOverride: nautobot
   promtail:
     enabled: true
