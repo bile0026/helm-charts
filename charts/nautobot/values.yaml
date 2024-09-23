@@ -1219,7 +1219,7 @@ prometheus:
     remoteWrite:
       - url: http://grafana-mimir-gateway.svc.cluster.local/api/v1/push
         headers:
-          X-Scope-OrgID: cox
+          X-Scope-OrgID: development
     extraScrapeConfigs:
       - job_name: nautobot-poc
         honor_timestamps: true
