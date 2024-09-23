@@ -1210,3 +1210,135 @@ postgresqlha:
 rabbitmq:
   # -- Enable deployment of the [Bitnami RabbitMQ](https://github.com/bitnami/charts/tree/main/bitnami/rabbitmq) chart, all other `rabbitmq.*` parameters will be passed directly to that chart
   enabled: false
+
+
+# Prometheus
+prometheus:
+  namespaceOverride: nautobot
+  server:
+    remoteWrite:
+      - url: http://grafana-mimir-gateway.svc.cluster.local/api/v1/push
+        headers:
+          X-Scope-OrgID: cox
+    extraScrapeConfigs:
+      - job_name: nautobot-poc
+        honor_timestamps: true
+        scrape_interval: 15s
+        scrape_timeout: 10s
+        metrics_path: /metrics
+        scheme: https
+        tls_config:
+            insecure_skip_verify: true
+        static_configs:
+        - targets:
+          - nautobot.svc.cluster.local
+      - job_name: nautobot-poc-app
+        honor_timestamps: true
+        scrape_interval: 15s
+        scrape_timeout: 10s
+        metrics_path: "/api/plugins/capacity-metrics/app-metrics"
+        scheme: https
+        tls_config:
+            insecure_skip_verify: true
+        static_configs:
+        - targets:
+          - nautobot.svc.cluster.local
+
+# Mimir
+mimir:
+  minio:
+    enabled: true
+  namespaceOverride: nautobot
+  # blockStorage:
+  #   backend: s3
+  #   config: |
+  #     access_key_id:
+  #     secret_access_key:
+  #     bucket_name: mimir-poc
+  #     endpoint: minio.cox.net
+  #     insecure: true
+  # storeGateway:
+  #   extraEnvVars:
+  #     - name: S3_ACCESS_KEY_ID
+  #       valueFrom:
+  #         secretKeyRef:
+  #           name: ace-nautobot-env
+  #           key: access-key-id
+  #     - name: S3_SECRET_ACCESS_KEY
+  #       valueFrom:
+  #         secretKeyRef:
+  #           name: ace-nautobot-env
+  #           key: secret-access-key
+
+# Tempo
+tempo:
+  namespaceOverride: nautobot
+  metrics_generator:
+    remoteWrite:
+      - url: http://mimir.svc.cluster.local:9009/api/v1/push
+        send_exemplars: true
+
+# Loki
+loki:
+  namespaceOverride: nautobot
+  promtail:
+    enabled: true
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: "/tmp/positions.yaml"
+
+    clients:
+      - url: "http://loki.svc.cluster.local:3100/loki/api/v1/push"
+
+    scrape_configs:
+      - job_name: "flog_scrape"
+        docker_sd_configs:
+          - host: "unix:///var/run/docker.sock"
+            refresh_interval: "5s"
+        relabel_configs:
+          - source_labels: ["__meta_docker_container_name"]
+            regex: "/(.*)"
+            target_label: "container"
+          - source_labels: ["__meta_docker_container_log_stream"]
+            target_label: "logstream"
+          - source_labels: ["__meta_docker_container_label_logging_jobname"]
+            target_label: "job"
+        pipeline_stages:
+        - regex:
+            expression: '^.*resource\.service\.name=(?P<service_name>[\S]+).*$'
+        - labels:
+            service_name:
+
+
+# Open Telemetry Connector
+open-telemetry:
+  namespaceOverride: nautobot
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:
+
+  exporters:
+    otlp:
+      endpoint: "tempo:4317"
+      tls:
+        insecure: true
+
+    prometheusremotewrite:
+      endpoint: "http://mimir:9009/api/v1/push"
+      # When using the official Prometheus (running via Docker)
+      # endpoint: 'http://prometheus:9090/api/v1/write', add:
+      tls:
+        insecure: true
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        exporters: [otlp]
+      metrics:
+        receivers: [otlp]
+        exporters: [prometheusremotewrite]

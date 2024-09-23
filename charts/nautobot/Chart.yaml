@@ -68,6 +68,16 @@ dependencies:
     tags:
       - "bitnami-common"
     version: "2.x.x"
+  - name: prometheus
+    repository: oci://registry-1.docker.io/bitnamicharts/prometheus
+  - name: mimir
+    repository: oci://registry-1.docker.io/bitnamicharts/grafana-mimir
+  - name: tempo
+    repository: oci://registry-1.docker.io/bitnamicharts/grafana-tempo
+  - name: loki
+    repository: oci://registry-1.docker.io/bitnamicharts/grafana-loki
+  - name: open-telemetry
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
 description: "Nautobot is a Network Source of Truth and Network Automation Platform."
 home: "https://github.com/nautobot/nautobot"
 icon: "https://raw.githubusercontent.com/nautobot/helm-charts/main/images/NautobotLogoSquare.png"
