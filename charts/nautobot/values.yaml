@@ -1279,7 +1279,7 @@ tempo:
         send_exemplars: true
 
 # Loki
-loki:
+grafana-loki:
   namespaceOverride: nautobot
   promtail:
     enabled: true
@@ -1314,7 +1314,9 @@ loki:
 
 
 # Open Telemetry Connector
-open-telemetry:
+opentelemetry-collector:
+  image:
+    repository: "otel/opentelemetry-collector-k8s"
   namespaceOverride: nautobot
   receivers:
     otlp:
