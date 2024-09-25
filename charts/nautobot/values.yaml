@@ -1255,19 +1255,19 @@ mimir:
   #     access_key_id:
   #     secret_access_key:
   #     bucket_name: mimir-poc
-  #     endpoint: minio.cox.net
+  #     endpoint: minio.svc.cluster.local
   #     insecure: true
   # storeGateway:
   #   extraEnvVars:
   #     - name: S3_ACCESS_KEY_ID
   #       valueFrom:
   #         secretKeyRef:
-  #           name: ace-nautobot-env
+  #           name: nautobot-env
   #           key: access-key-id
   #     - name: S3_SECRET_ACCESS_KEY
   #       valueFrom:
   #         secretKeyRef:
-  #           name: ace-nautobot-env
+  #           name: nautobot-env
   #           key: secret-access-key
 
 # Tempo
